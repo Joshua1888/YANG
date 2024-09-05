@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Deck
+public class Deck : MonoBehaviour
 {
 
     private static List<Vector3> holder;
