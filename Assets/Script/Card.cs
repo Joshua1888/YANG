@@ -28,6 +28,10 @@ public class Card : MonoBehaviour
         aboveNum = 0;
         below = new List<Card>();
         type = CardType.undefined;
+
+        // test part
+            setType(CardType.undefined);
+        // test ends
     }
 
     
