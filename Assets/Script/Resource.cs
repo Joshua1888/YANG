@@ -45,7 +45,6 @@ public static class Resource
 
         foreach(CardInterfaceStorage c in cardInterfacesST)
         {
-            Debug.Log(c.type + " " + c.sprite.GetType());
             cardInterfaces.Add(c.type, c.sprite);
         }
 
@@ -54,16 +53,3 @@ public static class Resource
 
 }
 
-
-//files to storage card interface
-[CreateAssetMenu(fileName = "CardInterface",menuName ="CardInterface")]
-public class CardInterface : ScriptableObject
-{
-    public List<CardInterfaceStorage> cardInterface;
-}
-[Serializable]
-public class CardInterfaceStorage
-{
-    public CardType type;
-    public Sprite sprite;
-}

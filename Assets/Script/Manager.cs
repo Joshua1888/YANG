@@ -14,7 +14,7 @@ public class Board : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       // Init();
+       Init();
     }
 
 
@@ -25,32 +25,50 @@ public class Board : MonoBehaviour
 
         listOfCard = new List<GameObject>();
 
-        int numForX = -15;
-        int numForY = 30;
+        float numForX = -1.5f;
+        float numForY = 3;
 
-        GameObject deckClone = Instantiate(deck, canvas.transform);
+        //GameObject deckClone = Instantiate(deck, canvas.transform);
 
-        deckClone.transform.localPosition = new Vector3(0.0f, -4.5f, 0.0f);
-
-        for (int i = 0; i < 3; i++)
+        //deckClone.transform.localPosition = new Vector3(0.0f, -4.5f, 0.0f);
+        for(int layer = 3;layer>0;layer--)
         {
-            for (int n = 0; n < 3; n++)
+            List<GameObject> newGeneratedCards = new List<GameObject>();
+            for (int i = 0; i < 3; i++)
             {
-                GameObject cardClone = Instantiate(card, canvas.transform);
-                cardClone.transform.localPosition = new Vector3(numForX, numForY, 0);
-                checkForCoverage(cardClone);
-                listOfCard.Add(cardClone);
+                for (int j = 0; j < 3; j++)
+                {
+                    GameObject cardClone = Instantiate(card);
+                    cardClone.transform.localPosition = new Vector3(numForX, numForY, layer);
+                    
+                    newGeneratedCards.Add(cardClone);
 
-                GameObject cardCloneb = Instantiate(card, canvas.transform);
-                cardCloneb.transform.localPosition = new Vector3(numForX, numForY - 2, 0);
-                checkForCoverage(cardCloneb);
-                listOfCard.Add(cardCloneb);
+                    numForX += 1.5f;
+                }
 
-                numForX += 15;
+                numForX -= 1.5f*3;
+                numForY -= 2;
+
             }
 
-            numForX = -15;
-            numForY -= 20;
+            foreach(GameObject c in newGeneratedCards)
+            {
+                if(c == null)
+                {
+                    Debug.LogError("Can't find the card");
+                }
+                checkForCoverage(c);
+            }
+            foreach(GameObject c in newGeneratedCards)
+            {
+
+                listOfCard.Add(c);
+            }
+
+            numForY += 6;
+
+            numForX -= 0.1f;
+            numForY -= -0.2f;
 
         }
     }
@@ -69,20 +87,30 @@ public class Board : MonoBehaviour
 
         foreach (GameObject cas in listOfCard)
         {
+
             RectTransform cCheck = cas.GetComponent<RectTransform>();
+
             float minCx = cCheck.rect.xMin + cCheck.anchoredPosition.x;
             float maxCx = cCheck.rect.xMax + cCheck.anchoredPosition.x;
             float minCy = cCheck.rect.yMin + cCheck.anchoredPosition.y;
             float maxCy = cCheck.rect.yMax + cCheck.anchoredPosition.y;
 
-            bool xOverlap = minVx < maxCx && maxVx > minCx;
-            bool yOverlap = minVy < maxCy && maxVy > minCy;
+            bool xOverlap = (minVx < maxCx) && (maxVx > minCx);
+            bool yOverlap = (minVy < maxCy) && (maxVy > minCy);
 
             if (xOverlap && yOverlap)
             {
-                // cas.GetComponent<Card>().interactable = false;
-                check.GetComponent<Card>().addBelow(cas.GetComponent<Card>());
-                cas.GetComponent<Card>().addAbove(check.GetComponent<Card>());
+                Card checkCard = check.GetComponent<Card>();
+                Card casCard = cas.GetComponent<Card>();
+
+                if (checkCard == null || casCard == null)
+                {
+                    Debug.LogError("Can't get the card");
+                    return;
+                }
+
+                casCard.addAbove();
+                checkCard.addBelow(casCard);
             }
         }
     }

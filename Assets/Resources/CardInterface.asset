@@ -12,3 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: CardInterface
   m_EditorClassIdentifier: Assembly-CSharp::CardInterface
+  cardInterface:
+  - type: 0
+    sprite: {fileID: 21300000, guid: 6cae93345e76e454a98609f97515ebeb, type: 3}
+  - type: 1
+    sprite: {fileID: 21300000, guid: 6cae93345e76e454a98609f97515ebeb, type: 3}
+  - type: 2
+    sprite: {fileID: 21300000, guid: 6cae93345e76e454a98609f97515ebeb, type: 3}
+  - type: 3
+    sprite: {fileID: 21300000, guid: 6cae93345e76e454a98609f97515ebeb, type: 3}
