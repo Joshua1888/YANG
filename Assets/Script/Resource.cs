@@ -1,30 +1,55 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public static class Resource 
 {
-    private static Dictionary<CardType, Sprite> cardInterface;
+    private static Dictionary<CardType, Sprite> cardInterfaces;
 
     //use the function to get the card interface
     public static Sprite getCardInterface(CardType t)
     {
-        if(cardInterface != null) loadCardInterface();
+        if (cardInterfaces == null)
+            if (!loadCardInterface())
+            {
+                Debug.LogError("Can't load card interface");
+                return null;
+            }
 
-        if(cardInterface.ContainsKey(t))
-            return cardInterface[t];
+        if(cardInterfaces.ContainsKey(t))
+            return cardInterfaces[t];
+
+        Debug.LogWarning("Can't find the card interface");
 
         return null;
     }
 
-    private static void loadCardInterface()
+    // to load card interface into RAM
+    private static bool loadCardInterface()
     {
-        /*
-        cardInterface = new Dictionary<CardType, Sprite>();
-        cardInterface.Add(CardType.a, Resources.Load<Sprite>("a"));
-        cardInterface.Add(CardType.b, Resources.Load<Sprite>("b"));
-        cardInterface.Add(CardType.c, Resources.Load<Sprite>("c"));
-    */
+        List<CardInterfaceStorage> cardInterfacesST = Resources.Load<CardInterface>("CardInterface").cardInterface;
+        if (cardInterfacesST == null)
+        {
+            Debug.LogError("Can't load card interface");
+            return false;
+        }
+
+        if(cardInterfacesST.Count == 0)
+        {
+            Debug.LogError("Card interface is empty");
+            return false;
+        }
+
+        cardInterfaces = new Dictionary<CardType, Sprite>();
+
+        foreach(CardInterfaceStorage c in cardInterfacesST)
+        {
+            cardInterfaces.Add(c.type, c.sprite);
+        }
+
+        return true;
     }
 
 }
+

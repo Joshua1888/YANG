@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-
 // defined the type of cards 
 public enum CardType
 {
@@ -10,27 +9,63 @@ public enum CardType
     a,
     b,
     c
-}
+} 
 
 public class Card : MonoBehaviour
 {
  
     private CardType type;      //type of the card
-    private int aboveNum;       //sorage the number of cards above the current card
+    private int aboveNum_;       //sorage the number of cards above the current card
+   
     private List<Card> below;   //store which cards are below the current card
     
     private Vector3 targetPos;
     private float speed = 1.0f;
     private bool isMoving;
 
-    private bool isClicked;
+    private bool isMovedFromBoard;
 
-    void Start()
+    public GameObject darkMask;
+
+    private int aboveNum
     {
+        get { return aboveNum_; }
+        set
+        {
+            aboveNum_ = value;
+            try
+            {
+                if (aboveNum_ == 0)
+                {
+                    darkMask.SetActive(false);
+                }
+                else if (aboveNum_ > 0)
+                {
+                    darkMask.SetActive(true);
+                }
+                else
+                {
+                    Debug.LogError("aboveNum is less than 0");
+                }
+            }
+            catch
+            {
+                Debug.LogError("Can't find darkMask");
+            }
+        }
+    }       //sorage the number of cards above the current card
+
+    void Awake()
+    {
+        darkMask = transform.GetChild(0).gameObject;
         isMoving = false;
         aboveNum = 0;
         below = new List<Card>();
         type = CardType.undefined;
+        isMovedFromBoard = false;
+        // test part
+            setType(CardType.undefined);
+        // test ends
     }
 
     
@@ -52,6 +87,7 @@ public class Card : MonoBehaviour
 
     }
 
+    //set the target position for the card and start moving
     public void moveTo(Vector3 pos)
     {
         if (isMoving)
@@ -69,7 +105,7 @@ public class Card : MonoBehaviour
     {
         type = t;
 
-        SpriteRenderer interfaceSprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
+        SpriteRenderer interfaceSprite = transform.GetChild(2).GetComponent<SpriteRenderer>();
         if(interfaceSprite == null)
         {
             Debug.LogError("Can't get SpriteRenderer");
@@ -87,6 +123,12 @@ public class Card : MonoBehaviour
 
     public void TaskOnClick()
     {
+        if(isMovedFromBoard)
+        {
+            Debug.Log("Card is already moved from board");
+            return;
+        }
+
         if(aboveNum !=0 )
         {
             Debug.Log("Can't remove the card");
@@ -96,7 +138,11 @@ public class Card : MonoBehaviour
         RemoveDownParts();
 
         // try to move the card to Square
-        Deck.Moving(this);
+        isMovedFromBoard = true;
+        Debug.Log("Card is clicked");
+        Debug.Log("Card type is: " + type);
+        Debug.Log("Number of cards above: " + aboveNum);   
+        Debug.Log("Number of cards below: " + below.Count);
 
     }
 
@@ -104,31 +150,26 @@ public class Card : MonoBehaviour
     {
         foreach (Card c in below)
         {
-            c.removeCard(this);
+            c.removeAbove();
         }
     }
 
-    public void addAbove(Card c)
+    public void addAbove()
     {
         aboveNum++;
     }
-    public void removeCard(Card c)
+    public void removeAbove()
     {
         aboveNum--;
     }
 
     public void addBelow(Card c)
     {
+        if(below == null)
+        {
+            Debug.LogError("Can't find below");
+            return;
+        }
         below.Add(c);
-    }
-
-    public void changeClick()
-    {
-        isClicked = true;
-    }
-
-    public bool getIsClick()
-    {
-        return isClicked;
     }
 }
