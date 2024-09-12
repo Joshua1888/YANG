@@ -135,10 +135,13 @@ public class Card : MonoBehaviour
             return;
         }
 
+        Deck.Moving(this);
+
+        // 
         RemoveDownParts();
 
         // try to move the card to Square
-        isMovedFromBoard = true;
+        
         Debug.Log("Card is clicked");
         Debug.Log("Card type is: " + type);
         Debug.Log("Number of cards above: " + aboveNum);   
@@ -172,4 +175,17 @@ public class Card : MonoBehaviour
         }
         below.Add(c);
     }
+
+
+    public bool getIsClick()
+    {
+        return isMovedFromBoard;
+    }
+
+
+    public void changeClick()
+    {
+        isMovedFromBoard = true;
+    }
+    
 }
