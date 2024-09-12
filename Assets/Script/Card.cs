@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
+
 // defined the type of cards 
 public enum CardType
 {
@@ -9,7 +10,7 @@ public enum CardType
     a,
     b,
     c
-} 
+}
 
 public class Card : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class Card : MonoBehaviour
     private Vector3 targetPos;
     private float speed = 1.0f;
     private bool isMoving;
+
+    private bool isClicked;
 
     void Start()
     {
@@ -93,6 +96,7 @@ public class Card : MonoBehaviour
         RemoveDownParts();
 
         // try to move the card to Square
+        Deck.Moving(this);
 
     }
 
@@ -116,5 +120,15 @@ public class Card : MonoBehaviour
     public void addBelow(Card c)
     {
         below.Add(c);
+    }
+
+    public void changeClick()
+    {
+        isClicked = true;
+    }
+
+    public bool getIsClick()
+    {
+        return isClicked;
     }
 }
