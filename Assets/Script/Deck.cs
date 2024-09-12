@@ -29,9 +29,9 @@ public class Deck : MonoBehaviour
         float diatance = (-1.07f) - -1.75f;
         for (int i = 0; i < numOfCardH; i++)
         {
-            num += diatance;
             Vector3 v = new(num, yCord, -5);
             holder.Add(v);
+            num += diatance;
         }
     }
 
@@ -49,7 +49,7 @@ public class Deck : MonoBehaviour
                 index++;
                 c.changeClick();
                 // Start the smooth movement coroutine
-                c.StartCoroutine(MoveCardToPosition(c, targetPosition, 1.0f)); 
+                c.StartCoroutine(MoveCardToPosition(c, targetPosition, 10f)); 
 
             }
         }
