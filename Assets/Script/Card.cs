@@ -8,13 +8,13 @@ public enum CardType
     undefined,
     a,
     b,
-    c
+    c,
 } 
 
 public class Card : MonoBehaviour
 {
  
-    private CardType type;      //type of the card
+    public CardType type {get; private set;}      //type of the card
     private int aboveNum_;       //sorage the number of cards above the current card
    
     private List<Card> below;   //store which cards are below the current card
@@ -64,7 +64,7 @@ public class Card : MonoBehaviour
         type = CardType.undefined;
         isMovedFromBoard = false;
         // test part
-            setType(CardType.undefined);
+            setType(CardType.a);
         // test ends
     }
 
@@ -88,13 +88,9 @@ public class Card : MonoBehaviour
     }
 
     //set the target position for the card and start moving
-    public void moveTo(Vector3 pos)
+    public void moveTo(Vector3 pos, float sp)
     {
-        if (isMoving)
-        {
-            Debug.Log("is still moving");
-        }
-        
+        speed = sp;   
         targetPos = pos;
         isMoving = true;
         
@@ -187,5 +183,10 @@ public class Card : MonoBehaviour
     {
         isMovedFromBoard = true;
     }
-    
+
+    public void getTy()
+    {
+        isMovedFromBoard = true;
+    }
+
 }

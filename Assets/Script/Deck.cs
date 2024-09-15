@@ -7,17 +7,18 @@ public class Deck : MonoBehaviour
 
     private static List<Vector3> holder;
     private const int numOfCardH = 7;
-    public static int index;
     public static List<Card> cardsDeck;
     public static float yCord = -4.5f;
+    //public static List<CardType> typeDeck;
 
 
     // Start is called before the first frame update
     void Start()
     {
         holder = new List<Vector3>();
-        index = 0;
         cardsDeck = new List<Card>();
+        // typeDeck = new List<CardType>();
+
         DeckPos();
         Debug.Log("Number of positions in holder: " + holder.Count);
     }
@@ -35,40 +36,75 @@ public class Deck : MonoBehaviour
         }
     }
 
+
     public static void Moving(Card c)
     {
+        int index = 0;
         if (!c.getIsClick())
         {
-            if (index >= holder.Count)
+            if (cardsDeck.Count >= 7)
             {
                 Debug.LogError("No more positions available in the holder!" + holder.Count);
             }
             else
             {
-                Vector3 targetPosition = holder[index]; // Target position from holder
-                index++;
                 c.changeClick();
-                // Start the smooth movement coroutine
-                c.StartCoroutine(MoveCardToPosition(c, targetPosition, 10f)); 
+                if (cardsDeck.Count == 0)
+                {
+                    cardsDeck.Insert(index, c);
+                    Updatee();
+                } else
+                {
+                    foreach (Card cds in cardsDeck)
+                    {
+                        CardType type = cds.type;
+                        if (c.type == cds.type)
+                        {
+                            cardsDeck.Insert(cardsDeck.IndexOf(cds), c);
+                            break;
+                        }
+                    }
+                    Updatee();
+                }
 
             }
         }
         else
         {
             Debug.Log("Cards already in the deck");
-        }        
-    }
-
-
-    private static IEnumerator MoveCardToPosition(Card c, Vector3 targetPosition, float speed)
-    {
-        while (c.transform.position != targetPosition)
-        {
-            // Move towards the target position at a constant speed
-            c.transform.position = Vector3.MoveTowards(c.transform.position, targetPosition, speed * Time.deltaTime);
-            yield return null; // Wait until the next frame
         }
     }
+
+
+    private static void Updatee()
+    {
+        int index = 0;
+        foreach (Card cds in cardsDeck)
+        {
+            MovePosition(cds, index);
+            index++;
+        }
+    }
+
+
+
+    private static void MovePosition(Card c, int index)
+    {
+        Debug.Log("UBC NMSL");
+        Vector3 targetPosition = holder[index]; // Target position from holder
+        // Start the smooth movement coroutine
+        c.moveTo(targetPosition, 10f);
+    }
+
+    //private static IEnumerator MoveCardToPosition(Card c, Vector3 targetPosition, float speed)
+    //{
+    //    while (c.transform.position != targetPosition)
+    //    {
+    //        // Move towards the target position at a constant speed
+    //        c.transform.position = Vector3.MoveTowards(c.transform.position, targetPosition, speed * Time.deltaTime);
+    //        yield return null; // Wait until the next frame
+    //    }
+    //}
 
 
 }
