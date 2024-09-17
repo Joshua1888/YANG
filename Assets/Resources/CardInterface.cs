@@ -11,8 +11,8 @@ public class CardInterface : ScriptableObject
     public List<CardInterfaceStorage> cardInterface;
 }
 [Serializable] 
-public class CardInterfaceStorage 
-{
+public class CardInterfaceStorage  
+{  
     public CardType type;
     public Sprite sprite;
 }

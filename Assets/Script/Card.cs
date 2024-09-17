@@ -8,7 +8,7 @@ public enum CardType
     undefined,
     a,
     b,
-    c
+    c,
 } 
 
 public class Card : MonoBehaviour
@@ -64,7 +64,12 @@ public class Card : MonoBehaviour
         type = CardType.undefined;
         isMovedFromBoard = false;
         // test part
-            setType(CardType.undefined);
+        if(Random.Range(0, 2) == 0)
+            setType(CardType.a);
+        else if(Random.Range(0, 1) == 0)
+            setType(CardType.b);
+        else
+            setType(CardType.c);
         // test ends
     }
 
@@ -84,17 +89,18 @@ public class Card : MonoBehaviour
                 isMoving = false;
             } 
         }
-
+        
     }
 
     //set the target position for the card and start moving
-    public void moveTo(Vector3 pos)
+    public void moveTo(Vector3 pos,float sp)
     {
         if (isMoving)
         {
             Debug.Log("is still moving");
         }
-        
+
+        speed = sp;
         targetPos = pos;
         isMoving = true;
         

@@ -48,6 +48,7 @@ public class Deck : MonoBehaviour
                 Vector3 targetPosition = holder[index]; // Target position from holder
                 index++;
                 c.changeClick();
+                //c.moveTo(targetPosition, 10f);
                 // Start the smooth movement coroutine
                 c.StartCoroutine(MoveCardToPosition(c, targetPosition, 10f)); 
 
