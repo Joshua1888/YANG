@@ -189,4 +189,11 @@ public class Card : MonoBehaviour
         isMovedFromBoard = true;
     }
 
+    public void Invisible()
+    {
+        Debug.Log("destroy");
+        gameObject.SetActive(false);
+
+    }
+
 }
