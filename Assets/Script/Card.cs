@@ -14,7 +14,7 @@ public enum CardType
 public class Card : MonoBehaviour
 {
  
-    private CardType type;      //type of the card
+    public CardType type {get; private set;}      //type of the card
     private int aboveNum_;       //sorage the number of cards above the current card
    
     private List<Card> below;   //store which cards are below the current card
@@ -64,12 +64,7 @@ public class Card : MonoBehaviour
         type = CardType.undefined;
         isMovedFromBoard = false;
         // test part
-        if(Random.Range(0, 2) == 0)
             setType(CardType.a);
-        else if(Random.Range(0, 1) == 0)
-            setType(CardType.b);
-        else
-            setType(CardType.c);
         // test ends
     }
 
@@ -89,18 +84,13 @@ public class Card : MonoBehaviour
                 isMoving = false;
             } 
         }
-        
+
     }
 
     //set the target position for the card and start moving
-    public void moveTo(Vector3 pos,float sp)
+    public void moveTo(Vector3 pos, float sp)
     {
-        if (isMoving)
-        {
-            Debug.Log("is still moving");
-        }
-
-        speed = sp;
+        speed = sp;   
         targetPos = pos;
         isMoving = true;
         
@@ -193,5 +183,17 @@ public class Card : MonoBehaviour
     {
         isMovedFromBoard = true;
     }
-    
+
+    public void getTy()
+    {
+        isMovedFromBoard = true;
+    }
+
+    public void Invisible()
+    {
+        Debug.Log("destroy");
+        gameObject.SetActive(false);
+
+    }
+
 }
