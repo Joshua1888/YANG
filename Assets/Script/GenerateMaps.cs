@@ -6,18 +6,32 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
+[Serializable]
+public class SaveJsonFile
+{
+    public int layers;
+    public SaveLayer[] saveLayer;
+}
+[Serializable]
+public class SaveLayer
+{
+    public double offsetX;
+    public double offsetY;
+    public bool[] layer;
+}
+
+
 public class StorageMap
 {
     public string name;
-    public int layers;
     public int CardCount;
     public List<Layer> pos;
 
+    
     public StorageMap(String n)
     {
         name = n;
         pos = new List<Layer>();
-    
     }
 
     public class Layer
@@ -25,6 +39,54 @@ public class StorageMap
         public int layer;
         public List<Vector2> pos;
         public int count;
+        public int getMapMinX()
+        {             
+            int minX = 1000000;
+            foreach (Vector2 v in pos)
+            {
+                if (v.x < minX)
+                {
+                    minX = (int)v.x;
+                }
+            }
+            return minX;
+        }
+        public int getMapMaxX()
+        {
+            int maxX = -1000000;
+            foreach (Vector2 v in pos)
+            {
+                if (v.x > maxX)
+                {
+                    maxX = (int)v.x;
+                }
+            }
+            return maxX;
+        }
+        public int getMapMinY()
+        {
+            int minY = 1000000;
+            foreach (Vector2 v in pos)
+            {
+                if (v.y < minY)
+                {
+                    minY = (int)v.y;
+                }
+            }
+            return minY;
+        }
+        public int getMapMaxY()
+        {
+            int maxY = -1000000;
+            foreach (Vector2 v in pos)
+            {
+                if (v.y > maxY)
+                {
+                    maxY = (int)v.y;
+                }
+            }
+            return maxY;
+        }
     }
 
     public List<Vector2> getLayer(int l)
@@ -83,7 +145,39 @@ public class StorageMap
     public void saveAsJsonFile()
     {
         //check if map valid
-        //change to the final storage version
+        if(CountTotalNumber()%3 != 0)
+        {
+            Debug.Log(CountTotalNumber());
+            Debug.LogError("Map is not valid");
+            return;
+        }
+        SaveJsonFile save = new SaveJsonFile();
+        save.layers = pos.Count;
+        save.saveLayer = new SaveLayer[pos.Count];
+
+        pos.Sort((x, y) => x.layer.CompareTo(y.layer));
+
+        for(int i = 0; i < pos.Count; i++)
+        {
+            SaveLayer s = new SaveLayer();
+            s.offsetX = 0;
+            s.offsetY = 0;
+
+            s.layer = new bool[(pos[i].getMapMaxX()-pos[i].getMapMinX()+1)* pos[i].getMapMaxY() - pos[i].getMapMinY() + 1];
+            int xOriginal = pos[i].getMapMinX();
+            int yOriginal = pos[i].getMapMinY();
+            Debug.Log("Layer: " + i + " " + xOriginal + " " + yOriginal);
+            foreach (Vector2 v in getLayer(i))
+            {
+                Debug.Log(v.x + " " + v.y);
+                s.layer[(int)v.x-xOriginal+((int)v.y-yOriginal)* (pos[i].getMapMaxX() - pos[i].getMapMinX() + 1)] = true;
+            }
+            save.saveLayer[i] = s;
+        }
+
+        string json = JsonUtility.ToJson(save);
+        System.IO.File.WriteAllText("Assets/Resources/" + name + ".json", json);
+
     }
     
 }
@@ -136,6 +230,10 @@ public class GenerateMaps : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            if (worldPosition.y > 1.2)
+                return;
+
             Vector3Int cellPosition = tilemap.WorldToCell(worldPosition);
             ChangeCardType(new Vector2Int( cellPosition.x,cellPosition.y));
         }
