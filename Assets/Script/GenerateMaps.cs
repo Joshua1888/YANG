@@ -10,13 +10,16 @@ using UnityEngine.UI;
 public class SaveJsonFile
 {
     public int layers;
+    public int totalCard;
     public SaveLayer[] saveLayer;
 }
 [Serializable]
 public class SaveLayer
 {
-    public double offsetX;
-    public double offsetY;
+    public float offsetX;
+    public float offsetY;
+    public int sizeX;
+    public int sizeY;
     public bool[] layer;
 }
 
@@ -154,6 +157,7 @@ public class StorageMap
         SaveJsonFile save = new SaveJsonFile();
         save.layers = pos.Count;
         save.saveLayer = new SaveLayer[pos.Count];
+        save.totalCard = CountTotalNumber();
 
         pos.Sort((x, y) => x.layer.CompareTo(y.layer));
 
@@ -162,17 +166,18 @@ public class StorageMap
             SaveLayer s = new SaveLayer();
             s.offsetX = 0;
             s.offsetY = 0;
+            s.sizeX = pos[i].getMapMaxX() - pos[i].getMapMinX() + 1;
+            s.sizeY = pos[i].getMapMaxY() - pos[i].getMapMinY() + 1;
 
-            s.layer = new bool[(pos[i].getMapMaxX()-pos[i].getMapMinX()+1)* pos[i].getMapMaxY() - pos[i].getMapMinY() + 1];
+            s.layer = new bool[(pos[i].getMapMaxX()-pos[i].getMapMinX()+1)* (pos[i].getMapMaxY() - pos[i].getMapMinY() + 1)];
             int xOriginal = pos[i].getMapMinX();
             int yOriginal = pos[i].getMapMinY();
-            Debug.Log("Layer: " + i + " " + xOriginal + " " + yOriginal);
             foreach (Vector2 v in getLayer(i))
             {
-                Debug.Log(v.x + " " + v.y);
                 s.layer[(int)v.x-xOriginal+((int)v.y-yOriginal)* (pos[i].getMapMaxX() - pos[i].getMapMinX() + 1)] = true;
             }
             save.saveLayer[i] = s;
+            
         }
 
         string json = JsonUtility.ToJson(save);

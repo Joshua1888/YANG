@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Timeline;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Board : MonoBehaviour
 {
@@ -21,33 +23,108 @@ public class Board : MonoBehaviour
     //Effect: Generate the card to canvas
     private void Init()
     {
+        const float deltaX = 0.7f;
+        const float deltaY = 0.7f;
 
+        Dictionary<CardType,int> remaining = new Dictionary<CardType, int>();
 
         listOfCard = new List<GameObject>();
+        SaveJsonFile map = readFile("Assets/Resources/test.json");
 
-        float numForX = -1.5f;
-        float numForY = 3;
+        remaining.Add(CardType.a, (int)(map.totalCard / 9) * 3);
+        remaining.Add(CardType.b, (int)(map.totalCard / 9)*3);
+        remaining.Add(CardType.c, map.totalCard - (int)(map.totalCard / 9) * 3*2);
 
         //GameObject deckClone = Instantiate(deck, canvas.transform);
 
         //deckClone.transform.localPosition = new Vector3(0.0f, -4.5f, 0.0f);
-        for(int layer = 3;layer>0;layer--)
+        for(int layer = 0;layer<map.layers;layer++)
         {
+            float numForY = 4;
+            float offsetX = map.saveLayer[layer].offsetX ;
+            float offsetY = map.saveLayer[layer].offsetY ;
             List<GameObject> newGeneratedCards = new List<GameObject>();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < map.saveLayer[layer].sizeX; i++)
             {
-                for (int j = 0; j < 3; j++)
+                float numForX = -2f;
+                for (int j = 0; j < map.saveLayer[layer].sizeY; j++)
                 {
+                    numForX += deltaX;
+                    if(!map.saveLayer[layer].layer[i + j * map.saveLayer[layer].sizeX])
+                    {
+                        continue;
+                    }
                     GameObject cardClone = Instantiate(card);
-                    cardClone.transform.localPosition = new Vector3(numForX, numForY, layer);
+                    cardClone.transform.localPosition = new Vector3(numForX +offsetX, numForY+offsetY, map.layers - layer);
                     
                     newGeneratedCards.Add(cardClone);
 
-                    numForX += 1.5f;
-                }
+                    int resType = Random.Range(0, 3);
+                    switch(resType)
+                    {
+                        case 0:
+                            if (remaining[CardType.a]!=0)
+                            {
+                                cardClone.GetComponent<Card>().setType( CardType.a);
+                                remaining[CardType.a]--;
+                                break;
+                            }
+                            else
+                            {
+                                goto default;
+                            }
+                        case 1:
+                            if (remaining[CardType.b] != 0)
+                            {
+                                cardClone.GetComponent<Card>().setType(CardType.b);
+                                remaining[CardType.b]--;
+                                break;
+                            }
+                            else
+                            {
+                                goto default;
+                            }
+                        case 2:
 
-                numForX -= 1.5f*3;
-                numForY -= 2;
+                            if (remaining[CardType.c] != 0)
+                            {
+                                cardClone.GetComponent<Card>().setType(CardType.c);
+                                remaining[CardType.c]--;
+                                break;
+                            }
+                            else
+                            {
+                                goto default;
+                            }
+                        default:
+                            if (remaining[CardType.a] != 0)
+                            {
+                                cardClone.GetComponent<Card>().setType(CardType.a);
+                                remaining[CardType.a]--;
+                                break;
+                            }
+                            else if (remaining[CardType.b] != 0)
+                            {
+                                cardClone.GetComponent<Card>().setType(CardType.b);
+                                remaining[CardType.b]--;
+                                break;
+                            }
+                            else if (remaining[CardType.c] != 0)
+                            {
+                                cardClone.GetComponent<Card>().setType(CardType.c);
+                                remaining[CardType.c]--;
+                                break;
+                            }
+                            else
+                            {
+                                Debug.LogError("Can't find the card type");
+                                break;
+                            }
+                            break;
+                    }
+
+                }
+                numForY -= deltaY;
 
             }
 
@@ -65,12 +142,21 @@ public class Board : MonoBehaviour
                 listOfCard.Add(c);
             }
 
-            numForY += 6;
-
-            numForX -= 0.1f;
-            numForY -= -0.2f;
 
         }
+    }
+
+    public SaveJsonFile readFile(string path)
+    {
+        SaveJsonFile save = new SaveJsonFile();
+        string json = System.IO.File.ReadAllText(path);
+        if(json == null)
+        {
+            Debug.LogError("Can't read the file");
+            return null;
+        }
+        save = JsonUtility.FromJson<SaveJsonFile>(json);
+        return save;
     }
 
     // Effect Disabled the card not in first layer

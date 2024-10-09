@@ -115,7 +115,7 @@ public class Deck : MonoBehaviour
     {
         Vector3 targetPosition = holder[index]; // Target position from holder
         // Start the smooth movement coroutine
-        c.moveTo(targetPosition, 1f);
+        c.moveTo(targetPosition, 5f);
     }
 
     //private static IEnumerator MoveCardToPosition(Card c, Vector3 targetPosition, float speed)

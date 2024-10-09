@@ -20,7 +20,7 @@ public class Card : MonoBehaviour
     private List<Card> below;   //store which cards are below the current card
     
     private Vector3 targetPos;
-    private float speed = 1.0f;
+    private float speed = 5f;
     private bool isMoving;
 
     private bool isMovedFromBoard;
